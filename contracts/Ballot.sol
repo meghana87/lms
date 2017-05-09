@@ -5,41 +5,41 @@ contract Ballot {
 	mapping (uint => Candidate) public Ballot;
 	struct Candidate {
 		address candidate_account;
-		uint votecount;
+		uint vote_count;
 	}
-	uint public numCandidates;
+	uint public Numcandidates;
 
 
-	function Ballot(address[] addresses_) {
-		for (uint i=0; i < addresses_.length; i++) {
-			Ballot[++numCandidates] = Candidate(addresses_[i],0);
+	function Ballot(address[] addresses) {
+		for (uint i=0; i < addresses.length; i++) {
+			Ballot[Numcandidates++] = Candidate(addresses[i],0);
 		}
 	}
 
-	function TotalVotesReceived(address account) returns (uint) {
-		if (validCandidate(account) == false) throw;
-		for (uint i=1; i <= numCandidates; i++) {
+	function Totalvotesreceived(address account) constant returns (uint) {
+		if (Validcandidate(account) == false) throw;
+		for (uint i=0; i < Numcandidates; i++) {
 			if (Ballot[i].candidate_account == account) {
-				return Ballot[i].votecount;
+				return Ballot[i].vote_count;
 			}
 		}
 	}
 
-	function VoteFor(address account) {
-		if (validCandidate(account) == false) throw;
-		for (uint i=1; i <= numCandidates; i++) {
+	function Votefor(address account) {
+		if (Validcandidate(account) == false) throw;
+		for (uint i=0; i < Numcandidates; i++) {
 			if (Ballot[i].candidate_account == account) {
-				Ballot[i].votecount++;
+				Ballot[i].vote_count++;
 			}
 		}
 	}
 
-	function TotalCandidates() constant returns (uint) {
-		return numCandidates;
+	function Totalcandidates() constant returns (uint) {
+		return Numcandidates;
 	}
 
-	function validCandidate(address account) returns (bool) {
-		for (uint i=1; i <= numCandidates; i++) {
+	function Validcandidate(address account) constant returns (bool) {
+		for (uint i=0; i < Numcandidates; i++) {
 			if (Ballot[i].candidate_account == account) {
 				return true;
 			} 
@@ -47,13 +47,16 @@ contract Ballot {
 		return false;
 	}
 
-	function FindWinner() returns (address) {
-		uint winning_count = 0;
+	function Findwinner() returns (address) {
+		uint winning_count;
 		address winner;
-		for (uint i=1; i <= numCandidates; i++) {
-			if (Ballot[i].votecount > winning_count) {
-				winning_count = Ballot[i].votecount;
+		for (uint i=0; i < (Numcandidates-1); i++) {
+			if (Ballot[i].vote_count > Ballot[i+1].vote_count) {
+				winning_count = Ballot[i].vote_count;
 				winner = Ballot[i].candidate_account;
+			}else {
+				winning_count = Ballot[i+1].vote_count;
+				winner = Ballot[i+1].candidate_account;
 			}
 		}
 		return winner;
