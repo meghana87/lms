@@ -4,12 +4,13 @@ import "./helper_contracts/strings.sol";
 import "./helper_contracts/StringLib.sol";
 import "./helper_contracts/zeppelin/ownership/Ownable.sol";
 
+import "./DataVerifiable.sol";
 import "./DataStore.sol";
 import "./BooksLibrary.sol";
 import "./MembersLibrary.sol";
 
 
-contract Organisation is Ownable {
+contract Organisation is DataVerifiable {
     using strings for *;
     using BooksLibrary for address;
     using MembersLibrary for address;
@@ -35,7 +36,7 @@ contract Organisation is Ownable {
         // The contract could also be funded after instantiation through sendTransaction.
     }
 
-    function setDataStore(address _bookStore, address _memberStore) onlyOwner {
+    function setDataStore(address _bookStore, address _memberStore) onlyAdmin {
         if (_bookStore == 0x0) {
             bookStore = new DataStore();
         } else {
@@ -60,15 +61,15 @@ contract Organisation is Ownable {
         return memberStore.memberCount();
     }
 
-    function addMember(string name, string email, address account) onlyOwner {
+    function addMember(string name, string email, address account) onlyAdmin {
         memberStore.addMember(name, email, account);
     }
 
-    function removeMember(address account) onlyOwner {
+    function removeMember(address account) onlyAdmin {
         memberStore.removeMember(account);
     }
 
-    function getMember(uint id) constant onlyOwner returns (string memberString) {
+    function getMember(uint id) constant onlyAdmin returns (string memberString) {
         if (id < 1 || id > memberStore.memberCount()) {
             return;
         }
@@ -82,7 +83,7 @@ contract Organisation is Ownable {
         return memberString;
     }
 
-    function getAllMembers() constant onlyOwner returns (string memberString, uint8 count) {
+    function getAllMembers() constant onlyAdmin returns (string memberString, uint8 count) {
         string memory member;
         for (uint i = 1; i <= memberStore.memberCount(); i++) {
             member = getMember(i);
@@ -151,7 +152,7 @@ contract Organisation is Ownable {
         bookStore.rateBook(id, rating, oldRating, comments);
     }
 
-    function kill(address upgradedOrganisation) onlyOwner {
+    function kill(address upgradedOrganisation) onlyAdmin {
         if (upgradedOrganisation == 0x0) {
             throw;
         }

@@ -52,6 +52,16 @@ contract('DataStore', function(accounts) {
         });
     });
 
+    describe('setBoolValue', function() {
+        it ('should set an attribute of type bool', async function() {
+            await store.addNew();
+            let index = await store.count();
+            await store.setBoolValue(web3.sha3('admin:', accounts[0]), true);
+            let isadmin = await store.getBoolValue(web3.sha3('admin:', accounts[0]));
+            assert.equal(isadmin, true);
+        });
+    });
+
     describe('setAddressIndex', function() {
         it('should set an index based on field of type address', async function() {
             await store.addNew();
